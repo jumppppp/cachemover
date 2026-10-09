@@ -1,0 +1,192 @@
+# Python 生态的官方缓存重定向条目。
+#
+# 约定：redirect.method = "env_var" 的条目必须给出 official_doc，
+# 加载器（catalog.py）会拒绝没有文档背书的条目，防止把猜测写进数据。
+
+[[app]]
+id = "pip"
+name = "pip（下载缓存 / HTTP cache）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://pip.pypa.io/en/stable/topics/caching/"
+risk = "low"
+notes = "官方提供 --cache-dir 命令行参数、global.cache-dir 配置项与 PIP_CACHE_DIR 环境变量"
+detect.env = ["PIP_CACHE_DIR"]
+detect.windows = "%LOCALAPPDATA%\\pip\\Cache"
+detect.macos = "~/Library/Caches/pip"
+detect.linux = "~/.cache/pip"
+redirect.method = "env_var"
+redirect.env_name = "PIP_CACHE_DIR"
+redirect.scope = "user"
+redirect.value_template = "{target}\\pip"
+
+[[app]]
+id = "uv"
+name = "uv（包与解释器缓存）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://docs.astral.sh/uv/reference/environment/"
+risk = "low"
+notes = "UV_CACHE_DIR 控制缓存；UV_PYTHON_INSTALL_DIR 控制解释器；UV_TOOL_DIR 控制 uv tool 安装目录"
+processes = ["uv.exe", "uvx.exe"]
+detect.env = ["UV_CACHE_DIR"]
+detect.windows = "%LOCALAPPDATA%\\uv\\cache"
+detect.macos = "~/Library/Caches/uv"
+detect.linux = "~/.cache/uv"
+redirect.method = "env_var"
+redirect.env_name = "UV_CACHE_DIR"
+redirect.scope = "user"
+redirect.value_template = "{target}\\uv"
+
+[[app]]
+id = "uv-tools"
+name = "uv tool 安装目录"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://docs.astral.sh/uv/reference/environment/"
+risk = "low"
+notes = "uv tool install 的落点；与 UV_CACHE_DIR 分开设置"
+detect.env = ["UV_TOOL_DIR"]
+detect.windows = "%USERPROFILE%\\.local\\share\\uv\\tools"
+detect.macos = "~/.local/share/uv/tools"
+detect.linux = "~/.local/share/uv/tools"
+redirect.method = "env_var"
+redirect.env_name = "UV_TOOL_DIR"
+redirect.scope = "user"
+redirect.value_template = "{target}\\uv-tools"
+
+[[app]]
+id = "pipx"
+name = "pipx（虚拟环境与 bin）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://pipx.pypa.io/stable/installation/"
+risk = "low"
+notes = "PIPX_HOME 是 pipx 的虚拟环境目录；PIPX_BIN_DIR 是其可执行文件目录，通常不要一起搬"
+detect.env = ["PIPX_HOME"]
+detect.windows = "%USERPROFILE%\\pipx"
+detect.macos = "~/.local/pipx"
+detect.linux = "~/.local/pipx"
+redirect.method = "env_var"
+redirect.env_name = "PIPX_HOME"
+redirect.scope = "user"
+redirect.value_template = "{target}\\pipx"
+
+[[app]]
+id = "poetry"
+name = "Poetry（缓存与虚拟环境）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://python-poetry.org/docs/configuration/"
+risk = "low"
+notes = "POETRY_CACHE_DIR 对应 cache-dir；虚拟环境路径另有 POETRY_VIRTUALENVS_PATH"
+detect.env = ["POETRY_CACHE_DIR"]
+detect.windows = "%LOCALAPPDATA%\\pypoetry\\Cache"
+detect.macos = "~/Library/Caches/pypoetry"
+detect.linux = "~/.cache/pypoetry"
+redirect.method = "env_var"
+redirect.env_name = "POETRY_CACHE_DIR"
+redirect.scope = "user"
+redirect.value_template = "{target}\\poetry"
+
+[[app]]
+id = "conda-pkgs"
+name = "conda（包缓存 pkgs）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://docs.conda.io/projects/conda/en/latest/user-guide/configuration/custom-env-and-pkg-locations.html"
+risk = "medium"
+notes = "官方机制是 .condarc 的 pkgs_dirs，不是环境变量；改后需确认已有环境仍能解析包"
+detect.env = ["CONDA_PKGS_DIRS"]
+detect.windows = "%USERPROFILE%\\.conda\\pkgs"
+detect.macos = "~/miniconda3/pkgs"
+detect.linux = "~/miniconda3/pkgs"
+redirect.method = "config_file"
+redirect.config_path = "%USERPROFILE%\\.condarc"
+redirect.config_key = "pkgs_dirs"
+redirect.config_format = "yaml"
+
+[[app]]
+id = "jupyter-data"
+name = "Jupyter（数据目录）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://docs.jupyter.org/en/latest/use/jupyter-directories.html"
+risk = "medium"
+notes = "JUPYTER_DATA_DIR 控制 kernels/skills 等；另有 JUPYTER_RUNTIME_DIR、JUPYTER_CONFIG_DIR"
+detect.env = ["JUPYTER_DATA_DIR"]
+detect.windows = "%APPDATA%\\jupyter"
+detect.macos = "~/Library/Jupyter"
+detect.linux = "~/.local/share/jupyter"
+redirect.method = "env_var"
+redirect.env_name = "JUPYTER_DATA_DIR"
+redirect.scope = "user"
+redirect.value_template = "{target}\\jupyter"
+
+[[app]]
+id = "matplotlib"
+name = "matplotlib（字体与配置缓存）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://matplotlib.org/stable/install/environment_variables_faq.html"
+risk = "low"
+notes = "MPLCONFIGDIR 控制缓存与配置文件目录；首次运行会重建字体缓存"
+detect.env = ["MPLCONFIGDIR"]
+detect.windows = "%USERPROFILE%\\.matplotlib"
+detect.macos = "~/.matplotlib"
+detect.linux = "~/.cache/matplotlib"
+redirect.method = "env_var"
+redirect.env_name = "MPLCONFIGDIR"
+redirect.scope = "user"
+redirect.value_template = "{target}\\matplotlib"
+
+[[app]]
+id = "huggingface"
+name = "Hugging Face Hub（模型缓存）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://huggingface.co/docs/huggingface_hub/guides/manage-cache"
+risk = "medium"
+notes = "HF_HOME 是总目录，缓存实际在其 hub/ 子目录；旧别名 HUGGINGFACE_HUB_CACHE 已不推荐"
+detect.env = ["HF_HOME", "HUGGINGFACE_HUB_CACHE"]
+detect.windows = "%USERPROFILE%\\.cache\\huggingface"
+detect.macos = "~/.cache/huggingface"
+detect.linux = "~/.cache/huggingface"
+redirect.method = "env_var"
+redirect.env_name = "HF_HOME"
+redirect.scope = "user"
+redirect.value_template = "{target}\\huggingface"
+
+[[app]]
+id = "torch-hub"
+name = "PyTorch Hub（预训练模型缓存）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://docs.pytorch.org/docs/stable/hub.html"
+risk = "low"
+notes = "TORCH_HOME 控制 hub/checkpoints；不搬走会随模型下载持续增长"
+detect.env = ["TORCH_HOME"]
+detect.windows = "%USERPROFILE%\\.cache\\torch"
+detect.macos = "~/.cache/torch"
+detect.linux = "~/.cache/torch"
+redirect.method = "env_var"
+redirect.env_name = "TORCH_HOME"
+redirect.scope = "user"
+redirect.value_template = "{target}\\torch"
+
+[[app]]
+id = "modelscope"
+name = "ModelScope（模型缓存）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://github.com/modelscope/modelscope"
+risk = "medium"
+notes = "MODELSCOPE_CACHE 控制模型缓存根目录；官方文档以 README/文档站为准，链接待复核"
+detect.env = ["MODELSCOPE_CACHE"]
+detect.windows = "%USERPROFILE%\\.cache\\modelscope"
+detect.macos = "~/.cache/modelscope"
+detect.linux = "~/.cache/modelscope"
+redirect.method = "env_var"
+redirect.env_name = "MODELSCOPE_CACHE"
+redirect.scope = "user"
+redirect.value_template = "{target}\\modelscope"

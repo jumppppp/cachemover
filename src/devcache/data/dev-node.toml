@@ -1,0 +1,110 @@
+# Node.js 生态的官方缓存重定向条目。
+
+[[app]]
+id = "npm-cache"
+name = "npm（cacache）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://docs.npmjs.com/cli/v11/using-npm/config"
+risk = "low"
+notes = "等效于 npm config set cache <路径>；环境变量 NPM_CONFIG_CACHE 会覆盖 npmrc 里的同名配置"
+processes = ["node.exe", "npm.exe"]
+detect.env = ["NPM_CONFIG_CACHE"]
+detect.windows = "%LOCALAPPDATA%\\npm-cache"
+detect.macos = "~/.npm"
+detect.linux = "~/.npm"
+redirect.method = "env_var"
+redirect.env_name = "NPM_CONFIG_CACHE"
+redirect.scope = "user"
+redirect.value_template = "{target}\\npm-cache"
+
+[[app]]
+id = "yarn-cache"
+name = "Yarn（cacheFolder）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://yarnpkg.com/configuration/yarnrc"
+risk = "medium"
+notes = "Yarn 2+ 还受 enableGlobalCache 影响；官方等价命令为 yarn config set cacheFolder <路径>"
+processes = ["node.exe"]
+detect.env = ["YARN_CACHE_FOLDER"]
+detect.windows = "%LOCALAPPDATA%\\Yarn\\Cache"
+detect.macos = "~/Library/Caches/Yarn"
+detect.linux = "~/.cache/yarn"
+redirect.method = "env_var"
+redirect.env_name = "YARN_CACHE_FOLDER"
+redirect.scope = "user"
+redirect.value_template = "{target}\\yarn"
+
+[[app]]
+id = "pnpm-store"
+name = "pnpm（store 与 cache）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://pnpm.io/settings"
+risk = "medium"
+notes = "官方机制是 pnpm config set store-dir / cache-dir（写入 .npmrc 的 store-dir、cache-dir），不是环境变量"
+processes = ["node.exe", "pnpm.exe"]
+detect.env = ["PNPM_HOME"]
+detect.windows = "%LOCALAPPDATA%\\pnpm-cache"
+detect.macos = "~/Library/Caches/pnpm"
+detect.linux = "~/.cache/pnpm"
+redirect.method = "config_file"
+redirect.config_path = "%USERPROFILE%\\.npmrc"
+redirect.config_key = "cache-dir"
+redirect.config_format = "ini"
+redirect.value_template = "{target}\\pnpm-cache"
+
+[[app]]
+id = "electron-cache"
+name = "Electron（二进制缓存）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://www.electronjs.org/docs/latest/api/environment-variables"
+risk = "low"
+notes = "该变量属于 electron 的安装期（@electron/get）；electron-builder 另有 ELECTRON_BUILDER_CACHE"
+processes = ["node.exe"]
+detect.env = ["electron_config_cache", "ELECTRON_CACHE"]
+detect.windows = "%LOCALAPPDATA%\\electron\\Cache"
+detect.macos = "~/Library/Caches/electron"
+detect.linux = "~/.cache/electron"
+redirect.method = "env_var"
+redirect.env_name = "electron_config_cache"
+redirect.scope = "user"
+redirect.value_template = "{target}\\electron"
+
+[[app]]
+id = "playwright"
+name = "Playwright（浏览器）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://playwright.dev/docs/browsers#install-browsers"
+risk = "low"
+notes = "Playwright 官方支持用该变量指定浏览器安装目录；改后需重新 npx playwright install"
+processes = ["node.exe"]
+detect.env = ["PLAYWRIGHT_BROWSERS_PATH"]
+detect.windows = "%LOCALAPPDATA%\\ms-playwright"
+detect.macos = "~/Library/Caches/ms-playwright"
+detect.linux = "~/.cache/ms-playwright"
+redirect.method = "env_var"
+redirect.env_name = "PLAYWRIGHT_BROWSERS_PATH"
+redirect.scope = "user"
+redirect.value_template = "{target}\\playwright"
+
+[[app]]
+id = "puppeteer"
+name = "Puppeteer（Chrome 下载）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://pptr.dev/guides/configuration"
+risk = "low"
+notes = "PUPPETEER_CACHE_DIR 控制其下载的浏览器存放位置"
+processes = ["node.exe"]
+detect.env = ["PUPPETEER_CACHE_DIR"]
+detect.windows = "%USERPROFILE%\\.cache\\puppeteer"
+detect.macos = "~/.cache/puppeteer"
+detect.linux = "~/.cache/puppeteer"
+redirect.method = "env_var"
+redirect.env_name = "PUPPETEER_CACHE_DIR"
+redirect.scope = "user"
+redirect.value_template = "{target}\\puppeteer"

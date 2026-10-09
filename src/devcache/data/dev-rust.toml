@@ -1,0 +1,40 @@
+# Rust 工具链的官方缓存重定向条目。
+#
+# 这一组是本机风险最高的一类：CARGO_HOME / RUSTUP_HOME 不只是缓存，
+# 还决定 ...\bin 里的 cargo.exe / rustc.exe / rustup.exe 与已编译好的 toolchain。
+
+[[app]]
+id = "cargo"
+name = "Cargo（registry / git 缓存）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://doc.rust-lang.org/cargo/reference/environment-variables.html"
+risk = "medium"
+notes = "CARGO_HOME 同时决定 bin\\（cargo install 的产物）；改后必须把 PATH 里的 ...\\cargo\\bin 一起改，并与 RUSTUP_HOME 成对迁移"
+processes = ["cargo.exe", "rustc.exe", "rustup.exe"]
+detect.env = ["CARGO_HOME"]
+detect.windows = "%USERPROFILE%\\.cargo"
+detect.macos = "~/.cargo"
+detect.linux = "~/.cargo"
+redirect.method = "env_var"
+redirect.env_name = "CARGO_HOME"
+redirect.scope = "user"
+redirect.value_template = "{target}\\cargo"
+
+[[app]]
+id = "rustup"
+name = "rustup（工具链目录）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://rust-lang.github.io/rustup/environment-variables.html"
+risk = "high"
+notes = "RUSTUP_HOME 里是编译好的 toolchain：单独改它会让 rustc/cargo 立刻报 no installed toolchains，必须与 CARGO_HOME 一起迁移并同步 PATH"
+processes = ["rustup.exe", "rustc.exe"]
+detect.env = ["RUSTUP_HOME"]
+detect.windows = "%USERPROFILE%\\.rustup"
+detect.macos = "~/.rustup"
+detect.linux = "~/.rustup"
+redirect.method = "env_var"
+redirect.env_name = "RUSTUP_HOME"
+redirect.scope = "user"
+redirect.value_template = "{target}\\rustup"

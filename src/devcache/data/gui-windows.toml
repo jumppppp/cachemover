@@ -1,0 +1,93 @@
+# 第三方 GUI 应用 —— 官方统统没有重定向环境变量。
+# 它们只能走应用内设置，或（本工具默认拒绝的）NTFS junction。
+# 这里 method 一律为 "none"：只报告位置与占用，不进入任何可执行计划。
+
+[[app]]
+id = "synthcut"
+name = "SynthCut by Relo"
+category = "gui"
+platforms = ["windows"]
+official_doc = "https://synthcut.ai/"
+risk = "high"
+notes = "无官方缓存配置；.aive 内含项目与代理视频，最大可到十几 GB。设置里暂未见存储路径选项，只能 junction（需 --allow-destructive 且交互确认）"
+processes = ["synthcut by relo.exe"]
+detect.windows = "%USERPROFILE%\\.aive"
+redirect.method = "none"
+
+[[app]]
+id = "wechat"
+name = "微信（Windows 版）"
+category = "gui"
+platforms = ["windows"]
+official_doc = "https://weixin.qq.com/"
+risk = "medium"
+notes = "官方提供应用内设置：设置 → 文件管理 → 更改文件保存位置"
+processes = ["weixin.exe", "wechat.exe"]
+detect.windows = "%APPDATA%\\Tencent"
+redirect.method = "none"
+
+[[app]]
+id = "jianying"
+name = "剪映专业版"
+category = "gui"
+platforms = ["windows"]
+official_doc = "https://www.capcut.cn/"
+risk = "medium"
+notes = "官方提供应用内设置：全局设置 → 草稿位置；另有缓存管理可清理"
+processes = ["jianyingpro.exe"]
+detect.windows = "%LOCALAPPDATA%\\JianyingPro"
+redirect.method = "none"
+
+[[app]]
+id = "lmstudio"
+name = "LM Studio"
+category = "gui"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://lmstudio.ai/docs"
+risk = "medium"
+notes = "官方提供应用内设置：设置 → 模型目录（Models Directory）；模型可占几十 GB"
+processes = ["lm studio.exe", "lmstudio.exe"]
+detect.windows = "%USERPROFILE%\\.lmstudio"
+detect.macos = "~/.lmstudio"
+detect.linux = "~/.lmstudio"
+redirect.method = "none"
+
+[[app]]
+id = "workbuddy"
+name = "WorkBuddy"
+category = "gui"
+platforms = ["windows"]
+official_doc = "-"
+risk = "high"
+notes = "仅支持 defaultWorkspacePath，无缓存目录配置；logs/traces 等自建目录需 junction 才能搬"
+processes = ["workbuddy.exe"]
+detect.windows = "%USERPROFILE%\\.workbuddy"
+redirect.method = "none"
+
+[[app]]
+id = "lingma"
+name = "通义灵码（.lingma）"
+category = "gui"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://lingma.aliyun.com/"
+risk = "medium"
+notes = "无官方设置；作为 IDE 插件运行时无法仅凭进程名可靠判定"
+processes = []
+detect.windows = "%USERPROFILE%\\.lingma"
+detect.macos = "~/.lingma"
+detect.linux = "~/.lingma"
+redirect.method = "none"
+
+[[app]]
+id = "chrome"
+name = "Google Chrome（用户数据）"
+category = "gui"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://support.google.com/chrome/a/answer/6271282"
+risk = "high"
+notes = "无官方缓存目录设置；只能改启动参数 --user-data-dir / --disk-cache-dir，这会改变整个浏览器档案位置，风险高"
+processes = ["chrome.exe"]
+detect.windows = "%LOCALAPPDATA%\\Google\\Chrome\\User Data"
+detect.macos = "~/Library/Application Support/Google/Chrome"
+detect.linux = "~/.config/google-chrome"
+redirect.method = "none"

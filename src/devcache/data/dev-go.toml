@@ -1,0 +1,55 @@
+# Go 工具链的官方缓存重定向条目。
+
+[[app]]
+id = "go-build"
+name = "Go（构建缓存）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://pkg.go.dev/cmd/go#hdr-Environment_variables"
+risk = "low"
+notes = "GOCACHE 只存构建产物，清空只会让下次编译变慢；也可用 go env -w GOCACHE=<路径> 持久化"
+processes = ["go.exe"]
+detect.env = ["GOCACHE"]
+detect.windows = "%LOCALAPPDATA%\\go-build"
+detect.macos = "~/Library/Caches/go-build"
+detect.linux = "~/.cache/go-build"
+redirect.method = "env_var"
+redirect.env_name = "GOCACHE"
+redirect.scope = "user"
+redirect.value_template = "{target}\\go-build"
+
+[[app]]
+id = "go-mod"
+name = "Go（模块缓存）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://pkg.go.dev/cmd/go#hdr-Environment_variables"
+risk = "low"
+notes = "GOMODCACHE 是 module 下载缓存；默认位于 $GOPATH/pkg/mod，单独设置可让它脱离 GOPATH"
+processes = ["go.exe"]
+detect.env = ["GOMODCACHE"]
+detect.windows = "%USERPROFILE%\\go\\pkg\\mod"
+detect.macos = "~/go/pkg/mod"
+detect.linux = "~/go/pkg/mod"
+redirect.method = "env_var"
+redirect.env_name = "GOMODCACHE"
+redirect.scope = "user"
+redirect.value_template = "{target}\\go-mod"
+
+[[app]]
+id = "gopath"
+name = "GOPATH（工作区）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://go.dev/ref/mod"
+risk = "medium"
+notes = "GOPATH 下除 pkg\\ 缓存外还有 bin\\（go install 的产物）；迁移后必须同步改 PATH 里的 ...\\Go_workspace\\bin 之类条目"
+processes = ["go.exe"]
+detect.env = ["GOPATH"]
+detect.windows = "%USERPROFILE%\\go"
+detect.macos = "~/go"
+detect.linux = "~/go"
+redirect.method = "env_var"
+redirect.env_name = "GOPATH"
+redirect.scope = "user"
+redirect.value_template = "{target}\\go-workspace"

@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "devcache"
+version = "0.1.0"
+description = "Detect developer-tool cache locations and relocate them via official mechanisms (Windows-first)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+  { name = "jumppppp", email = "2817797085@qq.com" },
+]
+maintainers = [
+  { name = "jumppppp", email = "2817797085@qq.com" },
+]
+keywords = [
+  "cache",
+  "cache-relocation",
+  "disk-space",
+  "environment-variables",
+  "junction",
+  "relocation",
+  "windows",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: System Administrators",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: Microsoft :: Windows",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: System :: Filesystems",
+  "Topic :: System :: Systems Administration",
+  "Topic :: Utilities",
+  "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://github.com/jumppppp/devcache"
+Repository = "https://github.com/jumppppp/devcache"
+Issues = "https://github.com/jumppppp/devcache/issues"
+Changelog = "https://github.com/jumppppp/devcache/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/jumppppp/devcache/blob/main/docs/DESIGN.md"
+
+[project.optional-dependencies]
+# PyYAML is only needed for `config_file` entries in YAML format (e.g. conda .condarc)
+yaml = ["PyYAML>=6"]
+dev = [
+  "pytest>=7",
+  "tomli>=2; python_version < '3.11'",
+]
+
+[project.scripts]
+devcache = "devcache.cli:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+devcache = ["data/*.toml", "py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

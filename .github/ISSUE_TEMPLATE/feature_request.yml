@@ -1,0 +1,65 @@
+name: Feature request / new catalog entry
+description: Request support for another tool's cache, or another capability
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Adding a tool usually means adding **one TOML block** to
+        `src/devcache/data/`. See [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md).
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of request is this?
+      options:
+        - New catalog entry (a tool whose cache should be detected)
+        - New capability in the CLI
+        - Support for a platform other than Windows
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: tool
+    attributes:
+      label: Tool and version
+      placeholder: "Poetry 1.8.3"
+    validations:
+      required: true
+
+  - type: input
+    id: path
+    attributes:
+      label: Where does it store data today?
+      description: The path you actually observe on your machine.
+      placeholder: "%LOCALAPPDATA%\\pypoetry\\Cache"
+
+  - type: input
+    id: doc
+    attributes:
+      label: Official documentation URL
+      description: |
+        Required for anything executable: this project only relocates by
+        vendor-documented mechanisms. "It works for me" recipes are out of scope.
+      placeholder: "https://python-poetry.org/docs/configuration/"
+
+  - type: dropdown
+    id: method
+    attributes:
+      label: Official mechanism
+      options:
+        - Environment variable
+        - Official config file
+        - In-app setting only (report-only entry)
+        - None that I could find
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Anything else?
+      description: Caveats, migration notes, whether the app must be closed first.

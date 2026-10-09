@@ -1,0 +1,36 @@
+# 机器学习工具链的官方缓存重定向条目。
+
+[[app]]
+id = "ollama-models"
+name = "Ollama（模型仓库）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://docs.ollama.com/faq"
+risk = "medium"
+notes = "模型动辄数十 GB；迁移后需重启 ollama 服务才会读到新位置"
+processes = ["ollama.exe", "ollama app.exe"]
+detect.env = ["OLLAMA_MODELS"]
+detect.windows = "%USERPROFILE%\\.ollama\\models"
+detect.macos = "~/.ollama/models"
+detect.linux = "/usr/share/ollama/.ollama/models"
+redirect.method = "env_var"
+redirect.env_name = "OLLAMA_MODELS"
+redirect.scope = "user"
+redirect.value_template = "{target}\\ollama-models"
+
+[[app]]
+id = "keras"
+name = "Keras（数据集与权重缓存）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://keras.io/getting_started/faq/"
+risk = "low"
+notes = "KERAS_HOME 同时存放 datasets/ 与 models/；默认在 ~/.keras"
+detect.env = ["KERAS_HOME"]
+detect.windows = "%USERPROFILE%\\.keras"
+detect.macos = "~/.keras"
+detect.linux = "~/.keras"
+redirect.method = "env_var"
+redirect.env_name = "KERAS_HOME"
+redirect.scope = "user"
+redirect.value_template = "{target}\\keras"

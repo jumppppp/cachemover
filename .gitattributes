@@ -1,0 +1,17 @@
+# Keep the repository itself LF-only: Windows checkouts otherwise store CRLF
+# in .yml / .py / .md, which produces noisy diffs and can upset CI tooling.
+* text=auto eol=lf
+
+# Windows-native script types are the exception.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary assets must never be line-ending mangled.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary

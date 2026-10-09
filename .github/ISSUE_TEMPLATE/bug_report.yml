@@ -1,0 +1,87 @@
+name: Bug report
+description: Something behaved differently from what the documentation says
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please **don't paste secrets** or full registry dumps.
+
+        The most useful thing you can attach is the plan JSON and the exact command output.
+
+  - type: dropdown
+    id: command
+    attributes:
+      label: Which command?
+      options:
+        - scan
+        - plan
+        - apply
+        - verify
+        - export
+        - undo
+        - other / not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: The exact command and its output.
+      render: console
+      placeholder: |
+        $ devcache plan --target R:\Caches
+        ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect instead?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: write-path
+    attributes:
+      label: Did this involve a write?
+      description: This tool is dry-run by default; a dry-run that writes anything is a security bug.
+      options:
+        - label: This happened while running `apply` **without** `--apply` (i.e. a dry-run wrote something)
+        - label: This happened **with** `--apply`
+        - label: A backup directory was missing or written outside `--backup-root`
+        - label: No writing was involved
+
+  - type: input
+    id: version
+    attributes:
+      label: devcache version
+      description: Output of `devcache --version`
+      placeholder: "devcache 0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Python version and OS
+      placeholder: "Python 3.11.9 on Windows 11 23H2"
+    validations:
+      required: true
+
+  - type: input
+    id: entry
+    attributes:
+      label: Affected catalog entry (if any)
+      description: The `id` from `devcache export --format json`
+      placeholder: "pip"
+
+  - type: textarea
+    id: plan
+    attributes:
+      label: Plan JSON (optional)
+      description: Output of `devcache plan --json`, redacted as needed.
+      render: json

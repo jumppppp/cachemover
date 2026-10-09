@@ -1,0 +1,138 @@
+# 其他开发工具链的官方缓存重定向条目。
+
+[[app]]
+id = "nuget-packages"
+name = "NuGet（全局包目录）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://learn.microsoft.com/nuget/consume-packages/managing-the-global-packages-and-cache-folders"
+risk = "low"
+notes = "环境变量优先于 globalPackagesFolder 配置与 RestorePackagesPath 属性；另有 NUGET_HTTP_CACHE_PATH 控制 http 缓存"
+processes = ["dotnet.exe", "msbuild.exe"]
+detect.env = ["NUGET_PACKAGES"]
+detect.windows = "%USERPROFILE%\\.nuget\\packages"
+detect.macos = "~/.nuget/packages"
+detect.linux = "~/.nuget/packages"
+redirect.method = "env_var"
+redirect.env_name = "NUGET_PACKAGES"
+redirect.scope = "user"
+redirect.value_template = "{target}\\nuget"
+
+[[app]]
+id = "gradle"
+name = "Gradle（用户目录）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://docs.gradle.org/current/userguide/build_environment.html"
+risk = "medium"
+notes = "GRADLE_USER_HOME 里同时有 caches/（依赖）与 wrapper/dists/；Android Studio 也在用，迁移前请先退出 IDE"
+processes = ["java.exe", "studio64.exe"]
+detect.env = ["GRADLE_USER_HOME"]
+detect.windows = "%USERPROFILE%\\.gradle"
+detect.macos = "~/.gradle"
+detect.linux = "~/.gradle"
+redirect.method = "env_var"
+redirect.env_name = "GRADLE_USER_HOME"
+redirect.scope = "user"
+redirect.value_template = "{target}\\gradle"
+
+[[app]]
+id = "maven-repo"
+name = "Maven（本地仓库）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://maven.apache.org/settings.html"
+risk = "medium"
+notes = "官方机制是 settings.xml 的 <localRepository>（XML），本工具只报告不自动改写，避免破坏已有配置"
+processes = ["java.exe", "mvn.cmd"]
+detect.env = ["MAVEN_OPTS"]
+detect.windows = "%USERPROFILE%\\.m2\\repository"
+detect.macos = "~/.m2/repository"
+detect.linux = "~/.m2/repository"
+redirect.method = "config_file"
+redirect.config_path = "%USERPROFILE%\\.m2\\settings.xml"
+redirect.config_key = "localRepository"
+redirect.config_format = "xml"
+redirect.value_template = "{target}\\maven"
+
+[[app]]
+id = "ccache"
+name = "ccache（编译缓存）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://ccache.dev/manual/latest.html"
+risk = "low"
+notes = "CCACHE_DIR 指定缓存目录；也可用 ccache --set-config=cache_dir=<路径>"
+processes = ["ccache.exe"]
+detect.env = ["CCACHE_DIR"]
+detect.windows = "%LOCALAPPDATA%\\ccache"
+detect.macos = "~/Library/Caches/ccache"
+detect.linux = "~/.cache/ccache"
+redirect.method = "env_var"
+redirect.env_name = "CCACHE_DIR"
+redirect.scope = "user"
+redirect.value_template = "{target}\\ccache"
+
+[[app]]
+id = "android-sdk"
+name = "Android SDK"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://developer.android.com/tools/variables"
+risk = "medium"
+notes = "ANDROID_SDK_ROOT 已弃用，官方推荐 ANDROID_HOME；SDK 内含 build-tools 等大体积组件"
+processes = ["adb.exe", "studio64.exe"]
+detect.env = ["ANDROID_HOME", "ANDROID_SDK_ROOT"]
+detect.windows = "%LOCALAPPDATA%\\Android\\Sdk"
+detect.macos = "~/Library/Android/sdk"
+detect.linux = "~/Android/Sdk"
+redirect.method = "env_var"
+redirect.env_name = "ANDROID_HOME"
+redirect.scope = "user"
+redirect.value_template = "{target}\\android-sdk"
+
+[[app]]
+id = "android-avd"
+name = "Android（AVD 镜像）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://developer.android.com/tools/variables"
+risk = "medium"
+notes = "ANDROID_AVD_HOME 控制模拟器镜像；单个 AVD 常有数 GB"
+processes = ["emulator.exe", "qemu-system-x86_64.exe"]
+detect.env = ["ANDROID_AVD_HOME"]
+detect.windows = "%USERPROFILE%\\.android\\avd"
+detect.macos = "~/.android/avd"
+detect.linux = "~/.android/avd"
+redirect.method = "env_var"
+redirect.env_name = "ANDROID_AVD_HOME"
+redirect.scope = "user"
+redirect.value_template = "{target}\\android-avd"
+
+[[app]]
+id = "vscode-extensions"
+name = "VS Code（扩展目录）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://code.visualstudio.com/docs/editor/portable"
+risk = "medium"
+notes = "官方机制是启动参数 --extensions-dir <路径>，或官方 Portable Mode（仅 ZIP 版支持）；本工具只报告不改写启动方式"
+processes = ["code.exe"]
+detect.windows = "%USERPROFILE%\\.vscode\\extensions"
+detect.macos = "~/.vscode/extensions"
+detect.linux = "~/.vscode/extensions"
+redirect.method = "none"
+
+[[app]]
+id = "vscode-userdata"
+name = "VS Code（用户数据）"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://code.visualstudio.com/docs/editor/portable"
+risk = "medium"
+notes = "官方机制是启动参数 --user-data-dir <路径>；Portable Mode 下 data\\\\ 目录会覆盖这两个参数"
+processes = ["code.exe"]
+detect.windows = "%APPDATA%\\Code"
+detect.macos = "~/Library/Application Support/Code"
+detect.linux = "~/.config/Code"
+redirect.method = "none"

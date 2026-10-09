@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Design decisions and safety model
+    url: https://github.com/jumppppp/devcache/blob/main/docs/DESIGN.md
+    about: Read this before proposing a mechanism that is not vendor-documented.
+  - name: How to add a catalog entry
+    url: https://github.com/jumppppp/devcache/blob/main/CONTRIBUTING.md
+    about: Most "add support for tool X" requests are one TOML block.
+  - name: Report a security issue
+    url: https://github.com/jumppppp/devcache/security/advisories/new
+    about: Please report vulnerabilities privately, not as a public issue.
