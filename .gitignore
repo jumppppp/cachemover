@@ -41,4 +41,4 @@ plan.json
 *.bak
 
 # default backup root (when set inside the repo)
-devcache-backups/
+cachemover-backups/

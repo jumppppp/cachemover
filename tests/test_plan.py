@@ -3,9 +3,9 @@ import json
 
 import pytest
 
-from devcache.catalog import load_catalog
-from devcache.detect import Detection, MOVABLE, NO_OFFICIAL_WAY, RUNNING
-from devcache.plan import (build_plan, execute, load_plan, plan_to_json, undo,
+from cachemover.catalog import load_catalog
+from cachemover.detect import Detection, MOVABLE, NO_OFFICIAL_WAY, RUNNING
+from cachemover.plan import (build_plan, execute, load_plan, plan_to_json, undo,
                            _write_ini)
 
 
@@ -19,11 +19,11 @@ def _detection(app_id, status=MOVABLE, target_path=None, path=r"C:\fake\cache"):
 
 
 def _silence_registry(monkeypatch, calls):
-    monkeypatch.setattr("devcache.plan.winenv.set_user_env",
+    monkeypatch.setattr("cachemover.plan.winenv.set_user_env",
                         lambda name, value: calls.append((name, value)))
-    monkeypatch.setattr("devcache.plan.winenv.broadcast_change", lambda *a, **k: None)
-    monkeypatch.setattr("devcache.plan.winenv.export_registry", lambda dest: [])
-    monkeypatch.setattr("devcache.plan.winenv.get_user_env_raw", lambda name: (None, None))
+    monkeypatch.setattr("cachemover.plan.winenv.broadcast_change", lambda *a, **k: None)
+    monkeypatch.setattr("cachemover.plan.winenv.export_registry", lambda dest: [])
+    monkeypatch.setattr("cachemover.plan.winenv.get_user_env_raw", lambda name: (None, None))
 
 
 def test_dry_run_is_the_default_and_writes_nothing(tmp_path, monkeypatch):
@@ -125,11 +125,11 @@ def test_ini_writer_replaces_existing_key(tmp_path):
 
 def test_undo_restores_snapshot_and_deletes_new_vars(tmp_path, monkeypatch):
     restored, removed = [], []
-    monkeypatch.setattr("devcache.plan.winenv.set_user_env",
+    monkeypatch.setattr("cachemover.plan.winenv.set_user_env",
                         lambda n, v: restored.append((n, v)))
-    monkeypatch.setattr("devcache.plan.winenv.delete_user_env",
+    monkeypatch.setattr("cachemover.plan.winenv.delete_user_env",
                         lambda n: (removed.append(n), True)[1])
-    monkeypatch.setattr("devcache.plan.winenv.broadcast_change", lambda *a, **k: None)
+    monkeypatch.setattr("cachemover.plan.winenv.broadcast_change", lambda *a, **k: None)
 
     (tmp_path / "env-before.json").write_text(json.dumps({
         "PIP_CACHE_DIR": {"value": r"C:\old\pip", "type": 2},
@@ -144,6 +144,6 @@ def test_undo_restores_snapshot_and_deletes_new_vars(tmp_path, monkeypatch):
 
 
 def test_undo_without_snapshot_or_regs_is_an_error(tmp_path):
-    from devcache.plan import undo as undo_fn
+    from cachemover.plan import undo as undo_fn
     with pytest.raises(FileNotFoundError):
         undo_fn(tmp_path)

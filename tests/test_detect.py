@@ -1,6 +1,6 @@
 """Detection rules: env beats default, and state transitions are exclusive."""
-from devcache.catalog import load_catalog
-from devcache.detect import (ALREADY_MOVED, MISSING, MOVABLE, NO_OFFICIAL_WAY,
+from cachemover.catalog import load_catalog
+from cachemover.detect import (ALREADY_MOVED, MISSING, MOVABLE, NO_OFFICIAL_WAY,
                              RUNNING, classify, resolve_path, target_path)
 
 
@@ -11,7 +11,7 @@ def _app(app_id: str):
 def test_env_var_wins_over_platform_default(monkeypatch):
     app = _app("pip")
     monkeypatch.setattr(
-        "devcache.winenv.get_env",
+        "cachemover.winenv.get_env",
         lambda name, scope: r"R:\Custom\pip" if scope == "process" else None)
     path, source = resolve_path(app, "windows")
     assert path == r"R:\Custom\pip"
@@ -20,7 +20,7 @@ def test_env_var_wins_over_platform_default(monkeypatch):
 
 def test_falls_back_to_platform_default(monkeypatch):
     app = _app("pip")
-    monkeypatch.setattr("devcache.winenv.get_env", lambda name, scope: None)
+    monkeypatch.setattr("cachemover.winenv.get_env", lambda name, scope: None)
     path, source = resolve_path(app, "windows")
     assert source == "default"
     assert path.lower().endswith("pip\\cache")

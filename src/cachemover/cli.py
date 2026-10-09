@@ -1,4 +1,4 @@
-"""Command line interface for devcache.
+"""Command line interface for cachemover.
 
 Commands
 --------
@@ -25,7 +25,7 @@ from .plan import build_plan, execute, load_plan, plan_to_json, undo
 from .sizing import human
 
 DEFAULT_TARGET = r"R:\Caches"
-DEFAULT_BACKUP_ROOT = r"%USERPROFILE%\devcache-backups"
+DEFAULT_BACKUP_ROOT = r"%USERPROFILE%\cachemover-backups"
 
 STATUS_ORDER = {
     MOVABLE: 0, RUNNING: 1, MISSING: 2, NO_OFFICIAL_WAY: 3,
@@ -117,7 +117,7 @@ def cmd_scan(args) -> int:
     _out(sys.stdout, "-" * (name_w + 70))
     _out(sys.stdout, f"合计 {human(total)}   （目标目录 {args.target}）")
     _out(sys.stdout)
-    _out(sys.stdout, "下一步： devcache plan --target " + args.target)
+    _out(sys.stdout, "下一步： cachemover plan --target " + args.target)
     return 0
 
 
@@ -158,7 +158,7 @@ def cmd_plan(args) -> int:
         for a in blocked:
             _out(sys.stdout, f"  · {a['name']:<24} [{a['status']}] {a['skip_reason']}")
     _out(sys.stdout)
-    _out(sys.stdout, "确认后执行： devcache apply -p <plan.json> --apply")
+    _out(sys.stdout, "确认后执行： cachemover apply -p <plan.json> --apply")
     return 0
 
 
@@ -283,10 +283,10 @@ def cmd_undo(args) -> int:
 # parser
 # --------------------------------------------------------------------------
 def _common_options() -> argparse.ArgumentParser:
-    """Options every subcommand accepts, so ``devcache plan --target X`` works.
+    """Options every subcommand accepts, so ``cachemover plan --target X`` works.
 
     argparse only lets a *top-level* option appear before the subcommand, which
-    would break the documented ``devcache <cmd> --target ...`` form.
+    would break the documented ``cachemover <cmd> --target ...`` form.
     """
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument("--target", default=DEFAULT_TARGET,
@@ -300,10 +300,10 @@ def _common_options() -> argparse.ArgumentParser:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="devcache",
+        prog="cachemover",
         description="检测开发工具缓存位置，并只按官方机制把它们重定向到统一目录。")
     parser.add_argument("--version", action="version",
-                        version=f"devcache {__version__}")
+                        version=f"cachemover {__version__}")
 
     common = _common_options()
     sub = parser.add_subparsers(dest="command", required=True)

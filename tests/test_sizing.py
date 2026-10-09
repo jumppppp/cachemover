@@ -4,7 +4,7 @@ import subprocess
 
 import pytest
 
-from devcache.sizing import dir_size, human, is_reparse_path
+from cachemover.sizing import dir_size, human, is_reparse_path
 
 
 def test_counts_bytes_and_files(tmp_path):

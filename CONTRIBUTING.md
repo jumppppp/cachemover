@@ -1,7 +1,7 @@
 # Contributing
 
 Thanks for helping. The most valuable contribution is **a new catalog entry**:
-one TOML block that tells `devcache` where another tool keeps its cache and
+one TOML block that tells `cachemover` where another tool keeps its cache and
 which official mechanism relocates it.
 
 Please read the [design decisions](docs/DESIGN.md) first — especially the safety
@@ -25,13 +25,13 @@ say so in `notes` and use `none`.
 
 ## Adding an entry
 
-1. Pick the right file in `src/devcache/data/` (or add a new one).
+1. Pick the right file in `src/cachemover/data/` (or add a new one).
 2. Copy an existing block as a template.
 3. Fill in `detect.env` (variables to check, in order), the per-platform
    defaults, and the redirect rule.
 4. Run `pytest`. `tests/test_catalog.py` validates docs, env names, config
    paths/keys and duplicate ids.
-5. Sanity-check detection on a real machine: `devcache scan --json` and confirm
+5. Sanity-check detection on a real machine: `cachemover scan --json` and confirm
    your entry reports the path you expect.
 
 ```toml
@@ -68,8 +68,8 @@ redirect.value_template = "{target}\\your-tool"
 ## Development setup
 
 ```bash
-git clone https://github.com/jumppppp/devcache
-cd devcache
+git clone https://github.com/jumppppp/cachemover
+cd cachemover
 python -m venv .venv
 . .venv/Scripts/activate        # Windows
 # . .venv/bin/activate          # Linux/macOS
@@ -105,5 +105,5 @@ The suite runs on Windows and Linux. On non-Windows, registry access degrades to
 
 If a vendor changes their default location or variable, open an issue with:
 the tool and version, the path you observed, and a link to the vendor's current
-documentation. Include the output of `devcache scan --json` for that entry if
+documentation. Include the output of `cachemover scan --json` for that entry if
 you can.

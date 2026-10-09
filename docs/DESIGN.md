@@ -1,4 +1,4 @@
-# devcache — 设计与范围（草案 v0.1）
+# cachemover — 设计与范围（草案 v0.1）
 
 ## 1. 目标
 
@@ -60,15 +60,15 @@ notes = "改后新开会话生效；旧目录数据需自行迁移"
 
 | 命令 | 作用 |
 |---|---|
-| `devcache scan` | 扫描并列出所有已知软件的缓存位置、占用、当前状态 |
-| `devcache scan --json` | 同上，机器可读输出 |
-| `devcache plan --target R:\Caches` | 生成迁移计划（含每条目的官方机制与风险），不落盘 |
-| `devcache plan --target R:\Caches -o plan.json` | 计划导出为 JSON |
-| `devcache apply -p plan.json` | 执行计划（仍默认 dry-run） |
-| `devcache apply -p plan.json --apply` | 真正写入（先备份） |
-| `devcache verify` | 核对生效状态（重读 env/配置并与计划比对） |
-| `devcache export --format json` | 导出完整清单（供其他脚本/CI 使用） |
-| `devcache undo --backup <dir>` | 从备份回滚环境变量与配置文件 |
+| `cachemover scan` | 扫描并列出所有已知软件的缓存位置、占用、当前状态 |
+| `cachemover scan --json` | 同上，机器可读输出 |
+| `cachemover plan --target R:\Caches` | 生成迁移计划（含每条目的官方机制与风险），不落盘 |
+| `cachemover plan --target R:\Caches -o plan.json` | 计划导出为 JSON |
+| `cachemover apply -p plan.json` | 执行计划（仍默认 dry-run） |
+| `cachemover apply -p plan.json --apply` | 真正写入（先备份） |
+| `cachemover verify` | 核对生效状态（重读 env/配置并与计划比对） |
+| `cachemover export --format json` | 导出完整清单（供其他脚本/CI 使用） |
+| `cachemover undo --backup <dir>` | 从备份回滚环境变量与配置文件 |
 
 ## 6. 安全机制（对应用户「备份完整、再三确认」的要求）
 
@@ -79,7 +79,7 @@ notes = "改后新开会话生效；旧目录数据需自行迁移"
 
 ## 7. 已确定的决策
 
-1. **CLI 名称**：`devcache`（同时作为 PyPI 包名、命令行名、GitHub 仓库名）。
+1. **CLI 名称**：`cachemover`（同时作为 PyPI 包名、命令行名、GitHub 仓库名）。
 2. **纳入 junction**，但**默认关闭**：仅当显式 `--allow-destructive` 且在交互模式下逐项确认时才执行；
    执行前必须已生成备份；非交互（CI/管道）环境下该功能一律拒绝执行。
 3. **只实现 Windows**；catalog 条目仍保留 `platforms`、`macos_default`、`linux_default` 字段，

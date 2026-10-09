@@ -1,4 +1,4 @@
-"""devcache — detect and relocate developer-tool caches.
+"""cachemover — detect and relocate developer-tool caches.
 
 Only official mechanisms are used for relocation: documented environment
 variables and official config files, each backed by an `official_doc` URL in

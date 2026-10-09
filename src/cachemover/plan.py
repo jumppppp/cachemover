@@ -277,7 +277,7 @@ def execute(plan: Dict[str, Any], *, apply: bool = False,
     winenv.broadcast_change()
     log.append("")
     log.append("已写入并广播变更；新开的终端/程序即可生效。")
-    log.append(f"回滚： devcache undo --backup {backup_dir}")
+    log.append(f"回滚： cachemover undo --backup {backup_dir}")
     return log
 
 

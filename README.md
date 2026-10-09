@@ -1,15 +1,15 @@
-# devcache
+# cachemover
 
-[![CI](https://github.com/jumppppp/devcache/actions/workflows/ci.yml/badge.svg)](https://github.com/jumppppp/devcache/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/devcache.svg)](https://pypi.org/project/devcache/)
-[![Python versions](https://img.shields.io/pypi/pyversions/devcache.svg)](https://pypi.org/project/devcache/)
+[![CI](https://github.com/jumppppp/cachemover/actions/workflows/ci.yml/badge.svg)](https://github.com/jumppppp/cachemover/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/cachemover.svg)](https://pypi.org/project/cachemover/)
+[![Python versions](https://img.shields.io/pypi/pyversions/cachemover.svg)](https://pypi.org/project/cachemover/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform: Windows](https://img.shields.io/badge/platform-Windows-0078D6.svg)](#platform-support)
 
 **Find out where your development tools actually keep their caches — then move
 them to one directory using only official mechanisms.**
 
-`devcache` is a small, dependency-free CLI. It reads a reviewable TOML catalog
+`cachemover` is a small, dependency-free CLI. It reads a reviewable TOML catalog
 of *official* relocation mechanisms (documented environment variables and
 official config files), reports what is on disk, and — only after you review
 the generated plan — rewrites **user-level** settings so the tools look
@@ -19,7 +19,7 @@ It never deletes anything and never moves your data. Migrating bytes is your
 call; this tool only redirects where tools look.
 
 ```console
-$ devcache scan --drive C
+$ cachemover scan --drive C
 状态              占用      来源        工具 / 路径
 --------------------------------------------------------------------------
 movable           0 B      default     Go（模块缓存）  C:\Users\me\go\pkg\mod
@@ -38,28 +38,28 @@ need (which variable, which config key, which doc) is scattered across dozens
 of vendor sites, and there is no maintained tool that both *detects* the
 locations and *relocates* them by the book.
 
-`devcache` fixes that with a catalog whose every executable entry must cite its
+`cachemover` fixes that with a catalog whose every executable entry must cite its
 official documentation URL — the loader **rejects** entries without one, so the
 catalog cannot silently drift into guessing.
 
 ## Install
 
 ```bash
-pip install devcache
+pip install cachemover
 ```
 
 Optional extras:
 
 ```bash
-pip install "devcache[yaml]"   # rewriting YAML configs (e.g. conda .condarc)
-pip install "devcache[dev]"    # pytest, tomli (for Python < 3.11)
+pip install "cachemover[yaml]"   # rewriting YAML configs (e.g. conda .condarc)
+pip install "cachemover[dev]"    # pytest, tomli (for Python < 3.11)
 ```
 
 From a clone:
 
 ```bash
-git clone https://github.com/jumppppp/devcache
-cd devcache
+git clone https://github.com/jumppppp/cachemover
+cd cachemover
 pip install -e ".[dev]"
 ```
 
@@ -68,20 +68,20 @@ Requires **Python 3.9+**. Python 3.10 needs `tomli`; 3.11+ uses stdlib `tomllib`
 ## Quick start
 
 ```console
-$ devcache scan                      # what is where, how big, in which state
-$ devcache scan --drive C            # only entries physically on C:
-$ devcache plan --target R:\Caches   # migration plan — writes nothing
-$ devcache plan --target R:\Caches -o plan.json
-$ devcache apply -p plan.json        # dry-run: prints exactly what would change
-$ devcache apply -p plan.json --apply  # execute (backs up first)
-$ devcache verify                    # re-read the environment, compare with target
-$ devcache undo --backup <dir>       # roll back an apply from its backup dir
+$ cachemover scan                      # what is where, how big, in which state
+$ cachemover scan --drive C            # only entries physically on C:
+$ cachemover plan --target R:\Caches   # migration plan — writes nothing
+$ cachemover plan --target R:\Caches -o plan.json
+$ cachemover apply -p plan.json        # dry-run: prints exactly what would change
+$ cachemover apply -p plan.json --apply  # execute (backs up first)
+$ cachemover verify                    # re-read the environment, compare with target
+$ cachemover undo --backup <dir>       # roll back an apply from its backup dir
 ```
 
 A plan separates what it *will* do from what it only *reports*:
 
 ```console
-$ devcache plan --target 'R:\Caches'
+$ cachemover plan --target 'R:\Caches'
 目标目录: R:\Caches   条目: 39   可执行: 13   仅报告: 26
 
 工具                       机制        风险      当前 → 目标
@@ -100,12 +100,12 @@ rustup（工具链目录）          env_var    high     C:\Users\me\.rustup →
 
 | command | what it does |
 |---|---|
-| `devcache scan` | list every known cache: effective path, size, source, state |
-| `devcache plan` | build a migration plan (writes nothing) |
-| `devcache apply` | execute a plan — **dry-run unless `--apply`**, backs up first |
-| `devcache verify` | re-read the environment and compare against the target |
-| `devcache export` | dump the whole catalog (`--format json` for tooling) |
-| `devcache undo` | restore an apply from its backup directory |
+| `cachemover scan` | list every known cache: effective path, size, source, state |
+| `cachemover plan` | build a migration plan (writes nothing) |
+| `cachemover apply` | execute a plan — **dry-run unless `--apply`**, backs up first |
+| `cachemover verify` | re-read the environment and compare against the target |
+| `cachemover export` | dump the whole catalog (`--format json` for tooling) |
+| `cachemover undo` | restore an apply from its backup directory |
 
 Common options: `--target <dir>` (default `R:\Caches`), `--catalog <dir>`,
 `--category dev|gui`, `--no-size`, `--drive C`.
@@ -117,7 +117,7 @@ Common options: `--target <dir>` (default `R:\Caches`), `--catalog <dir>`,
   (machine scope is read-only). No admin rights required, nothing system-wide.
 * **Backup first.** Every apply dumps both environment keys as `.reg`, the plan
   itself, and an `env-before.json` snapshot into `<backup_root>/<timestamp>/`.
-  `devcache undo --backup <that dir>` restores it exactly.
+  `cachemover undo --backup <that dir>` restores it exactly.
 * **Never deletes, never moves data.** Relocating the actual bytes is your job
   (`robocopy` / `move`); `apply` refuses to run if the target directory for an
   entry does not already exist.
@@ -129,7 +129,7 @@ Common options: `--target <dir>` (default `R:\Caches`), `--catalog <dir>`,
 
 ## Supported entries
 
-39 entries ship in `src/devcache/data/*.toml`, grouped by ecosystem:
+39 entries ship in `src/cachemover/data/*.toml`, grouped by ecosystem:
 
 | file | covers |
 |---|---|

@@ -15,21 +15,21 @@ First release. Windows-first, report-and-redirect only.
 
 ### Added
 
-- **Catalog** — 39 TOML entries in `src/devcache/data/*.toml` covering Python,
+- **Catalog** — 39 TOML entries in `src/cachemover/data/*.toml` covering Python,
   Rust, Go, Node, ML, .NET/Java/Android and GUI applications. Every executable
   entry must cite an `official_doc` URL; the loader rejects entries without one.
-- **`devcache scan`** — effective path, source (`env:`/`default`), size, file
+- **`cachemover scan`** — effective path, source (`env:`/`default`), size, file
   count and state for every known tool. `--json`, `--no-size`, `--drive C`.
-- **`devcache plan`** — separates executable actions from report-only entries and
+- **`cachemover plan`** — separates executable actions from report-only entries and
   explains every skip reason. `-o` to persist the plan.
-- **`devcache apply`** — dry-run by default; `--apply` backs up both environment
+- **`cachemover apply`** — dry-run by default; `--apply` backs up both environment
   keys plus an `env-before.json` snapshot before writing anything. `--only`,
   `--force`, `--backup-root`.
-- **`devcache verify`** — re-reads the environment and reports `[OK]` / `[MISS]`
+- **`cachemover verify`** — re-reads the environment and reports `[OK]` / `[MISS]`
   / `[N/A]`, distinguishing "still on C:" from "already elsewhere but not
   unified", and user scope from machine scope.
-- **`devcache export`** — full catalog as text or JSON.
-- **`devcache undo`** — restores an apply from its backup directory.
+- **`cachemover export`** — full catalog as text or JSON.
+- **`cachemover undo`** — restores an apply from its backup directory.
 - **Guard rails** — junction relocation requires `--allow-destructive`, an
   interactive terminal and an existing backup directory; it is refused outright
   in non-interactive runs.
@@ -37,5 +37,5 @@ First release. Windows-first, report-and-redirect only.
   (including "a junction must not be followed"), detection rules, plan/apply
   dry-run semantics and junction refusal paths.
 
-[Unreleased]: https://github.com/jumppppp/devcache/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/jumppppp/devcache/releases/tag/v0.1.0
+[Unreleased]: https://github.com/jumppppp/cachemover/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/jumppppp/cachemover/releases/tag/v0.1.0

@@ -1,7 +1,7 @@
 """Catalog integrity: nothing relocatable without an official doc behind it."""
 import pytest
 
-from devcache.catalog import CatalogError, load_catalog
+from cachemover.catalog import CatalogError, load_catalog
 
 
 def test_catalog_loads_and_is_not_empty():

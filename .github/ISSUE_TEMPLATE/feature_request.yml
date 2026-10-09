@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         Adding a tool usually means adding **one TOML block** to
-        `src/devcache/data/`. See [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md).
+        `src/cachemover/data/`. See [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md).
 
   - type: dropdown
     id: kind

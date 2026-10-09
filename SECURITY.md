@@ -1,8 +1,8 @@
 # Security Policy
 
-## What devcache does — and deliberately does not do
+## What cachemover does — and deliberately does not do
 
-`devcache` modifies where your tools look for data, so it is worth being
+`cachemover` modifies where your tools look for data, so it is worth being
 explicit about its blast radius.
 
 **It does:**
@@ -32,14 +32,14 @@ explicit about its blast radius.
 ## Running it safely
 
 * `apply` is a dry-run unless you pass `--apply`.
-* Review a plan (`devcache plan -o plan.json`) before applying it.
-* Keep the backup directory: `devcache undo --backup <dir>` restores the exact
+* Review a plan (`cachemover plan -o plan.json`) before applying it.
+* Keep the backup directory: `cachemover undo --backup <dir>` restores the exact
   prior state.
 
 ## Reporting a vulnerability
 
 Please open a private security advisory on GitHub
-(https://github.com/jumppppp/devcache/security/advisories/new) rather than a
+(https://github.com/jumppppp/cachemover/security/advisories/new) rather than a
 public issue, and include:
 
 * what you did, what you expected, and what happened;

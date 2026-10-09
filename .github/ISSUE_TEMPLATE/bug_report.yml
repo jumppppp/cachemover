@@ -32,7 +32,7 @@ body:
       description: The exact command and its output.
       render: console
       placeholder: |
-        $ devcache plan --target R:\Caches
+        $ cachemover plan --target R:\Caches
         ...
     validations:
       required: true
@@ -58,9 +58,9 @@ body:
   - type: input
     id: version
     attributes:
-      label: devcache version
-      description: Output of `devcache --version`
-      placeholder: "devcache 0.1.0"
+      label: cachemover version
+      description: Output of `cachemover --version`
+      placeholder: "cachemover 0.1.0"
     validations:
       required: true
 
@@ -76,12 +76,12 @@ body:
     id: entry
     attributes:
       label: Affected catalog entry (if any)
-      description: The `id` from `devcache export --format json`
+      description: The `id` from `cachemover export --format json`
       placeholder: "pip"
 
   - type: textarea
     id: plan
     attributes:
       label: Plan JSON (optional)
-      description: Output of `devcache plan --json`, redacted as needed.
+      description: Output of `cachemover plan --json`, redacted as needed.
       render: json

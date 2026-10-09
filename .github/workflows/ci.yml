@@ -50,10 +50,10 @@ jobs:
         run: pytest -q
 
       - name: CLI smoke test
-        run: devcache --version
+        run: cachemover --version
 
       - name: Import + catalog smoke test
-        run: python -c "import devcache, devcache.cli, devcache.plan, devcache.winenv; print('entries:', len(devcache.catalog.load_catalog()))"
+        run: python -c "import cachemover, cachemover.cli, cachemover.plan, cachemover.winenv; print('entries:', len(cachemover.catalog.load_catalog()))"
 
   build:
     name: build sdist + wheel
@@ -74,7 +74,7 @@ jobs:
         run: python -m twine check dist/*
 
       - name: Assert catalog data is packaged
-        run: python -c "import zipfile,glob; z=zipfile.ZipFile(glob.glob('dist/*.whl')[0]); names=z.namelist(); assert any(n.endswith('devcache/data/dev-python.toml') for n in names), names; print('catalog packaged ok')"
+        run: python -c "import zipfile,glob; z=zipfile.ZipFile(glob.glob('dist/*.whl')[0]); names=z.namelist(); assert any(n.endswith('cachemover/data/dev-python.toml') for n in names), names; print('catalog packaged ok')"
 
       - uses: actions/upload-artifact@v4
         with:

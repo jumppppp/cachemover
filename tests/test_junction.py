@@ -1,7 +1,7 @@
 """Junction guard rails: every path that could destroy data must say no."""
 import pytest
 
-from devcache.junction import JunctionRefused, guards_ok, is_junction
+from cachemover.junction import JunctionRefused, guards_ok, is_junction
 
 
 def test_refused_without_allow_destructive(tmp_path):
