@@ -1,0 +1,22 @@
+# AI 编码工具的数据 / 缓存目录。
+#
+# 这类工具通常用一个 HOME 变量同时管住「配置 + 会话历史 + 缓存」，
+# 所以迁移前必须退出程序，且迁移的是整个目录而不只是缓存子目录。
+
+[[app]]
+id = "codex"
+name = "OpenAI Codex CLI"
+category = "dev"
+platforms = ["windows", "macos", "linux"]
+official_doc = "https://developers.openai.com/codex/config-reference"
+risk = "medium"
+notes = "CODEX_HOME 同时存放配置、会话历史(sessions)与日志，不只是缓存；迁移前请完全退出 codex"
+processes = ["codex.exe", "codex"]
+detect.env = ["CODEX_HOME"]
+detect.windows = "%USERPROFILE%\\.codex"
+detect.macos = "~/.codex"
+detect.linux = "~/.codex"
+redirect.method = "env_var"
+redirect.env_name = "CODEX_HOME"
+redirect.scope = "user"
+redirect.value_template = "{target}\\.codex"

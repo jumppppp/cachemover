@@ -1,12 +1,12 @@
-"""Detection: where each app's cache actually lives, how big it is, its state.
+"""检测：每个工具的缓存在哪、有多大、处于什么状态。
 
-A detection answers four questions per app:
+一次检测回答四个问题：
 
-* which path is *in effect* right now (env var beats platform default);
-* where that answer came from (so the report can be audited);
-* how much it occupies;
-* whether it can be relocated by an official mechanism, is already moved,
-  is currently in use by a running process, or has no official way at all.
+* 当前**实际生效**的路径是哪个（环境变量优先于平台默认值）；
+* 这个答案来自哪里（便于审计报告）；
+* 它占用多少空间；
+* 它能否用官方机制重定向，是否已经搬过，是否正在被进程占用，或者官方
+  根本没有提供机制。
 """
 from __future__ import annotations
 
@@ -28,6 +28,9 @@ NO_OFFICIAL_WAY = "no-official-way"
 RUNNING = "running"
 MISSING = "missing"
 UNSUPPORTED = "unsupported-platform"
+#: 数据已不在 C 盘，但也没落在 --target 下（例如被移到了 D:/R: 的别处）。
+#: 这类不该叫 movable —— 它并不需要搬迁，只是"没统一"。
+ELSEWHERE = "elsewhere"
 
 #: Statuses that mean "nothing to do".
 TERMINAL = (ALREADY_MOVED, UNSUPPORTED)
@@ -106,6 +109,12 @@ def classify(app: App, path: str, exists: bool, running: bool, target) -> tuple:
     if wanted and os.path.normcase(os.path.abspath(path)) == \
             os.path.normcase(os.path.abspath(wanted)):
         return ALREADY_MOVED, "已经在目标位置"
+
+    # "movable" means: it is still on C: and could be relocated. Something
+    # already living on another drive is not movable — it is merely not unified.
+    drive = os.path.splitdrive(os.path.abspath(path))[0].upper()
+    if drive and drive != "C:":
+        return ELSEWHERE, f"已在 {drive} 盘，只是没统一到目标目录"
 
     if running:
         return RUNNING, "有进程正在运行，默认跳过"

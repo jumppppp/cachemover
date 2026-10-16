@@ -1,15 +1,14 @@
-"""Plan model: detections -> reviewable, serialisable, executable actions.
+"""计划模型：检测结果 → 可审阅、可序列化、可执行的动作。
 
-The plan is the only thing ``apply`` ever consumes, so a plan can be generated,
-diffed, committed to a repo and reviewed *before* anything is written.
+apply 只消费计划，所以计划可以先导出、可以 diff、可以提交进仓库，由人看过
+之后再执行。
 
-Safety contract (DESIGN.md § 4 and § 6):
+安全契约：
 
-* ``apply`` is a dry-run unless the caller explicitly opts in;
-* before writing anything, both environment keys plus the plan and an
-  ``env-before`` snapshot of every variable about to change are dumped into
-  ``<backup_root>/<timestamp>/``;
-* nothing is ever deleted — the migration of the actual data is the user's job.
+* 不带 --apply 时 apply 就是 dry-run；
+* 写任何东西之前，先把两个环境变量注册表键、计划本身，以及每个待改变量的
+  改前快照（env-before.json）一起导出到 <backup_root>/<时间戳>/；
+* 绝不删除任何东西 —— 真实数据的搬运由你自己用 robocopy/move 完成。
 """
 from __future__ import annotations
 
@@ -20,7 +19,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
 from . import winenv
-from .detect import (ALREADY_MOVED, Detection, MISSING, MOVABLE,
+from .detect import (ALREADY_MOVED, Detection, ELSEWHERE, MISSING, MOVABLE,
                      NO_OFFICIAL_WAY, RUNNING, UNSUPPORTED)
 
 PLAN_VERSION = 1
@@ -82,6 +81,8 @@ def build_plan(detections: Iterable[Detection], target, *,
             # 决定是否真的执行（--force）。
             action.executable = True
             action.skip_reason = "有进程在运行，默认跳过（--force 可覆盖）"
+        elif det.status == ELSEWHERE:
+            action.skip_reason = "已在其他盘，只是没统一到目标目录"
         elif rule.method not in AUTO_METHODS:
             action.skip_reason = f"method={rule.method} 不在自动执行范围内"
         elif not to_path:

@@ -1,8 +1,10 @@
-"""Load and validate the official cache-relocation catalog.
+"""清单：内置 40 条缓存重定向条目 + 字段校验。
 
-Every entry must carry an `official_doc` URL for the mechanism it claims; the
-loader rejects `env_var`/`config_file` entries that have no doc link, so the
-catalog cannot silently drift into guessing.
+每条声明了 env_var / config_file 机制的条目都必须带 official_doc 文档链接，
+加载器会拒绝没有文档背书的条目，防止清单悄悄退化成猜测。
+
+清单本身是 data/ 目录下的 TOML 文件（按生态分组），要新增条目就加一段
+[[app]]；也可以用 --catalog <目录> 指向别处的清单。
 """
 from __future__ import annotations
 

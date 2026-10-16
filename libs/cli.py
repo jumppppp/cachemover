@@ -1,13 +1,12 @@
-"""Command line interface for cachemover.
+"""命令行入口：
 
-Commands
---------
-scan    what is on disk right now, how big, and in which state
-plan    turn detections into a reviewable, serialisable plan
-apply   execute a plan (dry-run unless --apply; always backs up first)
-verify  re-read the environment and compare with the target
-export  dump the whole catalog as JSON
-undo    roll a previous apply back from its backup directory
+scan    列出当前缓存位置、占用与状态
+plan    把检测结果变成可审阅、可序列化的迁移计划
+apply   执行计划（默认 dry-run，写入前一定先备份）
+verify  重新读取环境，核对是否已指向目标目录
+export  导出完整清单（--format json 供程序消费）
+undo    从备份目录回滚一次 apply
+junction  兜底迁移：给无官方机制的应用建立 NTFS junction
 """
 from __future__ import annotations
 
@@ -19,7 +18,8 @@ from typing import List, Optional, Sequence
 
 from . import __version__, winenv
 from .catalog import App, CatalogError, load_catalog
-from .detect import (ALREADY_MOVED, MISSING, MOVABLE, NO_OFFICIAL_WAY,
+from .cli_junction import register as register_junction
+from .detect import (ALREADY_MOVED, ELSEWHERE, MISSING, MOVABLE, NO_OFFICIAL_WAY,
                      RUNNING, UNSUPPORTED, detect_all)
 from .plan import build_plan, execute, load_plan, plan_to_json, undo
 from .sizing import human
@@ -29,7 +29,7 @@ DEFAULT_BACKUP_ROOT = r"%USERPROFILE%\cachemover-backups"
 
 STATUS_ORDER = {
     MOVABLE: 0, RUNNING: 1, MISSING: 2, NO_OFFICIAL_WAY: 3,
-    ALREADY_MOVED: 4, UNSUPPORTED: 5,
+    ELSEWHERE: 4, ALREADY_MOVED: 5, UNSUPPORTED: 6,
 }
 
 
@@ -64,8 +64,25 @@ def _detections(args):
 # --------------------------------------------------------------------------
 # scan
 # --------------------------------------------------------------------------
+def _junction_map() -> dict:
+    """original_path(lower) -> junction entry id, for active migrations.
+
+    ``scan`` only knows about official mechanisms; without this, directories we
+    relocated with a junction still read as "no-official-way, 0 B" and there is
+    no way to tell they were already handled.
+    """
+    try:
+        from .migrate import Manifest
+        manifest = Manifest.load()
+    except Exception:
+        return {}
+    return {str(Path(e.original_path)).lower(): e.id
+            for e in manifest.entries.values() if e.state == "active"}
+
+
 def cmd_scan(args) -> int:
     detections = _detections(args)
+    jmap = _junction_map()
 
     if args.drive:
         prefix = args.drive.rstrip(":").upper() + ":"
@@ -92,6 +109,7 @@ def cmd_scan(args) -> int:
             "risk": d.app.risk,
             "official_doc": d.app.official_doc,
             "notes": d.app.notes,
+            "junction_id": jmap.get(str(Path(d.path)).lower()),
         } for d in detections]
         _out(sys.stdout, json.dumps(payload, ensure_ascii=False, indent=2))
         return 0
@@ -109,10 +127,16 @@ def cmd_scan(args) -> int:
         total += d.size_bytes
         size = human(d.size_bytes) if d.exists else "—"
         where = d.path or "(无)"
-        mark = "  ✔" if d.status == ALREADY_MOVED else ""
+        jid = jmap.get(str(Path(d.path)).lower())
+        if jid:
+            mark = f"  ✔junction:{jid}"
+        elif d.status == ALREADY_MOVED:
+            mark = "  ✔"
+        else:
+            mark = ""
         _out(sys.stdout,
              f"{d.status:<16} {size:>11}  {d.source:<18} {d.app.name}  {where}{mark}")
-        if d.status in (RUNNING, NO_OFFICIAL_WAY) and d.reason:
+        if d.status in (RUNNING, NO_OFFICIAL_WAY, ELSEWHERE) and d.reason:
             _out(sys.stdout, f"{'':<16} {'':>11}  {'':<18} └─ {d.reason}")
     _out(sys.stdout, "-" * (name_w + 70))
     _out(sys.stdout, f"合计 {human(total)}   （目标目录 {args.target}）")
@@ -327,7 +351,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--force", action="store_true",
                    help="连正在运行的条目也一并处理")
     p.add_argument("--backup-root", default=DEFAULT_BACKUP_ROOT,
-                   help=f"备份根目录（默认 {DEFAULT_BACKUP_ROOT}）")
+                   help=f"备份根目录（默认 {DEFAULT_BACKUP_ROOT.replace(chr(37), chr(37) * 2)}）")
     p.set_defaults(func=cmd_apply)
 
     p = sub.add_parser("verify", parents=[common], help="核对是否已指向目标")
@@ -340,6 +364,8 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("undo", parents=[common], help="从备份目录回滚")
     p.add_argument("--backup", required=True, help="备份目录（apply 输出的那个）")
     p.set_defaults(func=cmd_undo)
+
+    register_junction(sub, common)
 
     return parser
 

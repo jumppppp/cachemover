@@ -1,15 +1,13 @@
-"""NTFS junction relocation — deliberately hard to trigger.
+"""NTFS junction 底层操作 —— 故意做得很难被触发。
 
-Junction relocation is never an official vendor mechanism, so per DESIGN.md § 7
-it is opt-in and guarded:
+junction 从来不是厂商官方机制，所以按设计它是 opt-in 且有护栏的：
 
-* requires an explicit ``--allow-destructive`` flag;
-* refuses to run without a TTY (so it can never fire inside CI/pipes);
-* requires a backup directory to already exist.
+* 必须显式传 --allow-destructive；
+* 没有 TTY（非交互）时拒绝执行，避免在 CI/管道里被误触发；
+* 必须已经存在备份目录。
 
-Removing a junction must use ``rmdir``. ``Remove-Item -Recurse`` (and any
-recursive delete that follows reparse points) can walk *through* the link and
-destroy the target directory's contents instead of just unlinking it.
+删除 junction 一律用 rmdir。Remove-Item -Recurse 之类**会跟随 reparse
+point** 的递归删除会穿透链接，把目标目录里的真实数据删掉。
 """
 from __future__ import annotations
 

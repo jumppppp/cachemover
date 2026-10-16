@@ -1,11 +1,10 @@
-"""Windows environment layer: template expansion, registry env vars, broadcast.
+"""Windows 环境变量层：模板展开、注册表读写、变更广播。
 
-Only the *user* scope is ever written by this package (see docs/DESIGN.md § 4);
-the machine scope is read-only here on purpose.
+本工具写入的注册表位置永远是用户级的 HKCU\\Environment，机器级只读；
+因此不需要管理员权限，也不会影响全系统。
 
-Everything imports cleanly on non-Windows so the package can be installed,
-imported and tested on Linux/macOS: registry access degrades to "not set" and
-writes raise a clear error instead of an ImportError at import time.
+在非 Windows 上也能正常导入：注册表访问退化为「未设置」，写入则抛出
+明确错误，而不是在导入期就 ImportError。
 """
 from __future__ import annotations
 

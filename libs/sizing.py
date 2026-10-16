@@ -1,8 +1,8 @@
-"""Directory size accounting.
+"""目录体积统计。
 
-Reparse points (junctions / symlinks) are skipped rather than followed:
-following them double-counts the target and can loop forever on
-self-referential junctions such as ``%LOCALAPPDATA%\\Application Data``.
+遇到 reparse point（junction / 符号链接）只跳过、不跟随：跟随会把目标盘的
+大小重复计算，遇到自引用 junction（如 %LOCALAPPDATA%\\Application Data）
+还会无限递归。
 """
 from __future__ import annotations
 
